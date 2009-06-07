@@ -637,80 +637,6 @@ void GetCampaignTitles(struct FileEntry **entries)
 	}
 }
 
-/* GetHomeDirectory ()
- *
- * Uses environment variables to determine the users home directory.
- * returns some sort of path (C string)
- *
- * It's an ugly piece of sh*t... :/
- */
-
-char *cdogs_homepath = NULL;
-char * GetHomeDirectory(void)
-{
-	char *home;
-	char *user;
-	char *tmp1; /* excessive buffer */
-	char *tmp2; /* dynamic buffer */
-
-	if (cdogs_homepath == NULL) {
-		char *p;
-
-		p = getenv("CDOGS_CONFIG_DIR");
-		if (p != NULL && strlen(p) != 0) {
-			cdogs_homepath = strdup(p);
-			return cdogs_homepath;
-		}
-
-		home = getenv("HOME");
-
-		if (home == NULL || strlen(home) == 0) { /* no HOME var, try to get USER */
-			user = getenv("USER");
-
-			if (user == NULL || strlen(user) == 0) { /* someone has a dodgy shell (or windows) */
-				fprintf(stderr,"%s%s%s%s",
-				"##############################################################\n",
-				"# You don't have the environment variables HOME or USER set. #\n",
-				"# It is suggested you get a better shell. :D                 #\n",
-				"##############################################################\n");
-
-				tmp1 = calloc(2048, sizeof(char));	/* lots of chars... */
-				strcpy(tmp1, CDOGS_TEMP_DIR);
-
-				tmp2 = calloc(strlen(tmp1)+1, 1);
-				strcpy(tmp2, tmp1);
-				free(tmp1);
-
-				cdogs_homepath = tmp2;
-				return cdogs_homepath;
-			} else {				/* hopefully they have USER set... */
-				tmp1 = calloc(2048, 1);	/* lots of chars... */
-				strcpy(tmp1, "/home/");
-				strcat(tmp1, user);
-				strcat(tmp1, "/");
-				tmp2 = calloc(strlen(tmp1)+1, 1);
-				strcpy(tmp2, tmp1);
-				free(tmp1);
-
-				cdogs_homepath = tmp2;
-				return cdogs_homepath;
-			}
-		}
-
-		tmp1 = calloc(MAX_STRING_LEN, sizeof(char));	/* lots of chars... */
-		strcpy(tmp1, home);
-		strcat(tmp1, "/");
-
-		tmp2 = calloc(strlen(tmp1)+1, 1);
-		strcpy(tmp2, tmp1);
-		free(tmp1);
-		cdogs_homepath = tmp2;
-	}
-
-	return cdogs_homepath;
-}
-
-
 /* GetDataFilePath()
  *
  * returns a full path to a data file...
@@ -722,19 +648,11 @@ static char data_pbuf[255];
 char * GetDataFilePath(const char *path)
 {
 	if (!data_path) {
-		char *tmp;
-
-		if ((tmp = getenv("CDOGS_DATA_DIR")) != NULL && strlen(tmp) != 0) {
-			data_path = strdup(tmp);
-		} else {
-			tmp = calloc(strlen(CDOGS_DATA_DIR)+strlen(path)+1,sizeof(char));
-
-			strcpy(tmp, CDOGS_DATA_DIR);
-			strcat(tmp, path);
-
-			data_path = strdup(tmp);
-			free(tmp);
-		}
+		char *tmp = calloc(strlen(CDOGS_DATA_DIR)+strlen(path)+1,sizeof(char));
+		strcpy(tmp, CDOGS_DATA_DIR);
+		strcat(tmp, path);
+		data_path = strdup(tmp);
+		free(tmp);
 	}
 
 	strcpy(data_pbuf, data_path);
@@ -763,21 +681,8 @@ char * join(const char *s1, const char *s2)
 char cfpath[512];
 char * GetConfigFilePath(const char *name)
 {
-	char *homedir;
-
-#ifndef SYS_WIN
-	homedir = GetHomeDirectory();
-#else
-	homedir = "";
-#endif
-
-	//tmp = calloc(strlen(homedir) + strlen(name) + strlen(CDOGS_CFG_DIR) + 1, sizeof(char));
-
-	strcpy(cfpath, homedir);
-
-	strcat(cfpath, CDOGS_CFG_DIR);
+	strcpy(cfpath, "sd:/apps/cdogs-sdl/");
 	strcat(cfpath, name);
-
 	return cfpath;
 }
 
@@ -816,37 +721,6 @@ int mkdir_deep(const char *path, mode_t m)
 
 	return 0;
 }
-
-void SetupConfigDir(void)
-{
-	char *cfg_p = GetConfigFilePath("");
-
-	printf("Creating Config dir... ");
-
-#ifdef _MSC_VER
-#define S_IRUSR 0
-#define S_IXUSR 0
-#define S_IWUSR 0
-#endif
-
-	if (mkdir_deep(cfg_p, S_IRUSR | S_IXUSR | S_IWUSR) == 0) {
-		if (errno != EEXIST)
-			printf("Config dir created.\n");
-		else
-			printf("No need. Already exists!\n");
-	} else {
-		switch (errno) {
-			case EACCES:
-				printf("Permission denied!\n");
-				break;
-			default:
-				perror("Error creating config directory:");
-		}
-	}
-
-	return;
-}
-
 
 #ifdef _MSC_VER
 

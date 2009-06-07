@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 -------------------------------------------------------------------------------
 
  config.h - installation options/settings
- 
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 266 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/include/config.h $
  ID:     $Id: config.h 266 2008-02-10 09:56:33Z lmartinking $
- 
+
 */
 
 /* where to look for the cdogs data files */
@@ -40,7 +40,9 @@
 	#ifdef SYS_WIN
 		#define CDOGS_CFG_DIR "./config/"
 	#elif SYS_MACOSX
-		#define CDOGS_CFG_DIR "Library/Application Support/C-Dogs SDL/"	
+		#define CDOGS_CFG_DIR "Library/Application Support/C-Dogs SDL/"
+	#elif HW_RVL
+	    #define CDOGS_CFG_DIR "./config/"
 	#else
 		#define CDOGS_CFG_DIR ".cdogs/"
 	#endif
@@ -48,12 +50,4 @@
 
 #ifndef CDOGS_MUSIC_DIR
 	#define CDOGS_MUSIC_DIR "./music/"
-#endif
-
-#ifndef CDOGS_TEMP_DIR
-	#ifdef SYS_WIN
-		#define CDOGS_TEMP_DIR "C:/temp/cdogs/"
-	#else
-		#define CDOGS_TEMP_DIR "/tmp/cdogs/"
-	#endif
 #endif

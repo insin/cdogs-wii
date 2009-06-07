@@ -62,13 +62,11 @@ struct FileEntry *GetFilesFromDirectory(const char *directory);
 void FreeFileEntries(struct FileEntry *entries);
 void GetCampaignTitles(struct FileEntry **entries);
 
-char * GetHomeDirectory(void);
 char * GetConfigFilePath(const char *name);
 char * GetDataFilePath(const char *path);
 
 char * join(const char *s1, const char *s2);
 char * GetPWD(void);
-void SetupConfigDir(void);
 
 #ifdef _MSC_VER
 typedef size_t ssize_t;
