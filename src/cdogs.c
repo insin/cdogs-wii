@@ -1055,13 +1055,12 @@ int SDL_main(int argc, char *argv[])
 	if (gSticks[1].present)
 		printf("Joystick 2 detected\n");
 
-/*	if (gSticks[0].present) {
+	if (gSticks[0].present) {
 		gPlayer1Data.controls = JOYSTICK_ONE;
 		if (gSticks[1].present)
 			gPlayer2Data.controls = JOYSTICK_TWO;
 	} else if (gSticks[1].present)
 		gPlayer1Data.controls = JOYSTICK_TWO;
-*/
 
 	if (wait) {
 		printf("Press the enter key to continue...\n");
