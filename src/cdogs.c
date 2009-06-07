@@ -882,6 +882,14 @@ void PrintHelp (void)
 
 int SDL_main(int argc, char *argv[])
 {
+#ifdef HW_RVL
+	if (!fatInitDefault())
+	{
+		printf("Failed to initialise FAT library\n");
+		return -1;
+	}
+#endif
+
 	int i, wait = 0;
 	char s[13];
 	int snd_flag = SDL_INIT_AUDIO;
@@ -900,15 +908,6 @@ int SDL_main(int argc, char *argv[])
 		}
 	}
 
-#ifdef HW_RVL
-	if (!fatInitDefault())
-	{
-		printf("Failed to initialise FAT library\n");
-		return -1;
-	}
-#endif
-
-	SetupConfigDir();
 	LoadConfig();
 
 	for (i = 1; i < argc; i++) {
