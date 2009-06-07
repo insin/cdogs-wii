@@ -71,13 +71,25 @@ void PollSticks(int maxWait)
 			else
 				gSticks[idx].y = 0;
 
+			// Button 1 (Shoot)
 			if (SDL_JoystickGetButton(j, REMOTE_1) ||
 				SDL_JoystickGetButton(j, CLASSIC_B))
 				btn |= 1;
 
+			// Button 2 (Slide/Change)
 			if (SDL_JoystickGetButton(j, REMOTE_2) ||
 				SDL_JoystickGetButton(j, CLASSIC_A))
 				btn |= 2;
+
+			// Button 3 (Map)
+			if (SDL_JoystickGetButton(j, REMOTE_B) ||
+				SDL_JoystickGetButton(j, CLASSIC_Y))
+				btn |= 4;
+
+			// Button 4 (Pause)
+			if (SDL_JoystickGetButton(j, REMOTE_PLUS) ||
+				SDL_JoystickGetButton(j, CLASSIC_PLUS))
+				btn |= 8;
 
 			gSticks[idx].buttons = btn;
 		}
