@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 
 -------------------------------------------------------------------------------
 
- grafx.c - graphics related functions 
- 
+ grafx.c - graphics related functions
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 271 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/grafx.c $
  ID:     $Id: grafx.c 271 2009-04-16 11:39:16Z lmartinking $
- 
+
 */
 
 #include <stdio.h>
@@ -73,7 +73,7 @@ GFX_Mode * Gfx_ModePrev(void)
 	mode_idx--;
 	Wrap(mode_idx, 0, MODE_MAX)
 
-	return &gfx_modelist[mode_idx];	
+	return &gfx_modelist[mode_idx];
 }
 
 GFX_Mode * Gfx_ModeNext(void)
@@ -81,26 +81,26 @@ GFX_Mode * Gfx_ModeNext(void)
 	mode_idx++;
 	Wrap(mode_idx, 0, MODE_MAX)
 
-	return &gfx_modelist[mode_idx];	
+	return &gfx_modelist[mode_idx];
 }
 
 static int ValidMode(int w, int h)
 {
 	int i;
-	
+
 	for (i = 0; ; i++) {
 		unsigned int m_w = gfx_modelist[i].w;
 		unsigned int m_h = gfx_modelist[i].h;
-	
+
 		if (m_w == 0)
 			return 0;
 
 		if (m_w == w && m_h == h) {
-			mode_idx = i;	
+			mode_idx = i;
 			return 1;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -131,13 +131,13 @@ int Gfx_GetHint(const GFX_Hint h)
 SDL_Surface *screen = NULL;
 /* probably not the best thing, but we need the performance */
 int screen_w;
-int screen_h; 
+int screen_h;
 
 /* Initialises the video subsystem.
 
    Note: dynamic resolution change is not supported. */
 int InitVideo(void)
-{	
+{
 	char title[32];
 	SDL_Surface *new_screen = NULL;
 	int sdl_flags = 0;
@@ -182,7 +182,7 @@ int InitVideo(void)
 	if (new_screen == NULL) {
 		printf("ERROR: InitVideo: %s\n", SDL_GetError() );
 		return -1;
-	}	
+	}
 
 	if (screen == NULL) { /* only do this the first time */
 		debug(D_NORMAL, "setting caption and icon...\n");
@@ -200,19 +200,19 @@ int InitVideo(void)
 	}
 
 	screen = new_screen;
-	
+
 	SetClip(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 	debug(D_NORMAL, "Internal dimensions:\t%dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	SetPalette(gPalette);
-			
+
 	return 0;
 }
 
 void ShutDownVideo(void)
 {
 	debug(D_NORMAL, "Shutting down video...\n");
-	SDL_VideoQuit();		
+	SDL_VideoQuit();
 }
 
 typedef struct _Pic {
@@ -235,17 +235,17 @@ int ReadPics(const char *filename, void **pics, int maxPics,
 			fread(palette, sizeof(TPalette), 1, f);
 		else
 			fseek(f, sizeof(TPalette), SEEK_CUR);
-			
+
 		while (!eof && i < maxPics) {
 			fread(&size, sizeof(size), 1, f);
 			swap16(&size);
 			if (size) {
 				Pic *p = sys_mem_alloc(size);
-				
+
 				f_read16(f, &p->w, 2);
 				f_read16(f, &p->h, 2);
 
-				f_read(f, &p->data, size - 4);
+				ff_read(f, &p->data, size - 4);
 
 				pics[i] = p;
 
@@ -268,11 +268,11 @@ int AppendPics(const char *filename, void **pics, int startIndex,
 	int eof = 0;
 	unsigned short int size;
 	int i = startIndex;
-	
+
 	f = fopen(filename, "rb");
 	if (f != NULL) {
 		fseek(f, sizeof(TPalette), SEEK_CUR);
-			
+
 		while (!eof && i < maxPics) {
 			fread(&size, sizeof(size), 1, f);
 			swap16(&size);
@@ -281,7 +281,7 @@ int AppendPics(const char *filename, void **pics, int startIndex,
 
 				f_read16(f, &p->w, 2);
 				f_read16(f, &p->h, 2);
-				f_read(f, &p->data, size - 4);
+				ff_read(f, &p->data, size - 4);
 
 				pics[i] = p;
 
@@ -294,7 +294,7 @@ int AppendPics(const char *filename, void **pics, int startIndex,
 		}
 		fclose(f);
 	}
-	
+
 	return i - startIndex;
 }
 

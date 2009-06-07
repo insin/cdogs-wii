@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 -------------------------------------------------------------------------------
 
  files.h - <description here>
- 
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 250 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/include/files.h $
  ID:     $Id: files.h 250 2007-07-06 16:38:43Z lmartinking $
- 
+
 */
 
 #include "gamedata.h"
@@ -74,8 +74,8 @@ void SetupConfigDir(void);
 typedef size_t ssize_t;
 #endif
 
-ssize_t f_read(FILE *f, void *buf, size_t size);
-#define f_read8(f, b, s)	f_read(f, b, 1)
+ssize_t ff_read(FILE *f, void *buf, size_t size);
+#define f_read8(f, b, s)	ff_read(f, b, 1)
 ssize_t f_read32(FILE *f, void *buf, size_t size);
 ssize_t f_read16(FILE *f, void *buf, size_t size);
 ssize_t f_readarray32(FILE *f, void *buf, size_t size);

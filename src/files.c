@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 -------------------------------------------------------------------------------
 
  files.c - file handling functions
- 
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 266 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/files.c $
  ID:     $Id: files.c 266 2008-02-10 09:56:33Z lmartinking $
- 
+
 */
 
 #include <string.h>
@@ -69,16 +69,16 @@ void swap32 (void *d)
 	}
 }
 
-ssize_t f_read(FILE *f, void *buf, size_t size)
+ssize_t ff_read(FILE *f, void *buf, size_t size)
 {
 	return fread(buf, size, 1, f);
 }
 
 ssize_t f_read32(FILE *f, void *buf, size_t size)
 {
-	ssize_t ret = 0;	
+	ssize_t ret = 0;
 	if (buf) {
-		ret = f_read(f, buf, size);
+		ret = ff_read(f, buf, size);
 		swap32((int *)buf);
 	}
 	return ret;
@@ -112,19 +112,13 @@ void swap16 (void *d)
 
 ssize_t f_read16(FILE *f, void *buf, size_t size)
 {
-	ssize_t ret = 0;	
+	ssize_t ret = 0;
 	if (buf) {
-		ret = f_read(f, buf, size);
+		ret = ff_read(f, buf, size);
 		swap16((short int*)buf);
 	}
 	return ret;
 }
-
-
-#define Is_Writable(n)		(access(n, W_OK) == 0)
-#define Is_Readable(n)		(access(n, R_OK) == 0)
-#define Is_Executable(n)	(access(n, X_OK) == 0)
-#define Is_Browsable(n)		(access(n, X_OK) == 0)
 
 int ScanCampaign(const char *filename, char *title, int *missions)
 {
@@ -137,7 +131,7 @@ int ScanCampaign(const char *filename, char *title, int *missions)
 	f = fopen(filename, "rb");
 	if (f >= 0) {
 		f_read32(f, &i, sizeof(i));
-		
+
 		if (i != CAMPAIGN_MAGIC) {
 			fclose(f);
 			debug(D_NORMAL, "Filename: %s\n", filename);
@@ -153,9 +147,9 @@ int ScanCampaign(const char *filename, char *title, int *missions)
 			return CAMPAIGN_VERSIONMISMATCH;
 		}
 
-		f_read(f, setting.title, sizeof(setting.title));
-		f_read(f, setting.author, sizeof(setting.author));
-		f_read(f, setting.description, sizeof(setting.description));
+		ff_read(f, setting.title, sizeof(setting.title));
+		ff_read(f, setting.author, sizeof(setting.author));
+		ff_read(f, setting.description, sizeof(setting.description));
 		f_read32(f, &setting.missionCount, sizeof(setting.missionCount));
 		strcpy(title, setting.title);
 		*missions = setting.missionCount;
@@ -171,7 +165,7 @@ int ScanCampaign(const char *filename, char *title, int *missions)
 void load_mission_objective(FILE *f, struct MissionObjective *o)
 {
 		int offset = 0;
-		f_read(f, o->description, sizeof(o->description)); offset += sizeof(o->description);
+		ff_read(f, o->description, sizeof(o->description)); offset += sizeof(o->description);
 		f_read32(f, &o->type, sizeof(o->type));
 		f_read32(f, &o->index, sizeof(o->index));
 		f_read32(f, &o->count, sizeof(o->count));
@@ -189,13 +183,13 @@ void load_mission(FILE *f, struct Mission *m)
 		int i;
 		int o = 0;
 
-		f_read(f, m->title, sizeof(m->title));				o += sizeof(m->title);
-		f_read(f, m->description, sizeof(m->description));	o += sizeof(m->description);
+		ff_read(f, m->title, sizeof(m->title));				o += sizeof(m->title);
+		ff_read(f, m->description, sizeof(m->description));	o += sizeof(m->description);
 
 		debug(D_NORMAL, "== MISSION ==\n");
 		debug(D_NORMAL, "t: %s\n", m->title);
-		debug(D_NORMAL, "d: %s\n", m->description);  
-	
+		debug(D_NORMAL, "d: %s\n", m->description);
+
 		R32(m,  wallStyle);
 		R32(m,  floorStyle);
 		R32(m,  roomStyle);
@@ -211,22 +205,22 @@ void load_mission(FILE *f, struct Mission *m)
 		R32(m,  exitLeft); R32(m, exitTop); R32(m, exitRight); R32(m, exitBottom);
 
 		R32(m, objectiveCount);
-		
-		debug(D_NORMAL, "number of objectives: %d\n", m->objectiveCount);	
+
+		debug(D_NORMAL, "number of objectives: %d\n", m->objectiveCount);
  		for (i = 0; i < OBJECTIVE_MAX; i++) {
 			load_mission_objective(f, &m->objectives[i]);
 		}
-	
+
 		R32(m, baddieCount);
 		for (i = 0; i < BADDIE_MAX; i++) {
 			f_read32(f, &m->baddies[i], sizeof(int));
 		}
-		
+
 		R32(m, specialCount);
 		for (i = 0; i < SPECIAL_MAX; i++) {
 			f_read32(f, &m->specials[i], sizeof(int));
 		}
-		
+
 		R32(m, itemCount);
 		for (i = 0; i < ITEMS_MAX; i++) {
 			f_read32(f, &m->items[i], sizeof(int));
@@ -234,19 +228,19 @@ void load_mission(FILE *f, struct Mission *m)
 		for (i = 0; i < ITEMS_MAX; i++) {
 			f_read32(f, &m->itemDensity[i], sizeof(int));
 		}
-	
-		R32(m, baddieDensity);	
-		R32(m, weaponSelection);					
-		
-		f_read(f, m->song, sizeof(m->song));
-		f_read(f, m->map, sizeof(m->map));
-		
-		R32(m, wallRange);						
+
+		R32(m, baddieDensity);
+		R32(m, weaponSelection);
+
+		ff_read(f, m->song, sizeof(m->song));
+		ff_read(f, m->map, sizeof(m->map));
+
+		R32(m, wallRange);
 		R32(m, floorRange);
 		R32(m, roomRange);
 		R32(m, altRange);
 
-		debug(D_NORMAL, "number of baddies: %d\n", m->baddieCount);	
+		debug(D_NORMAL, "number of baddies: %d\n", m->baddieCount);
 
 		return;
 }
@@ -300,9 +294,9 @@ int LoadCampaign(const char *filename, TCampaignSetting * setting,
 			return CAMPAIGN_VERSIONMISMATCH;
 		}
 
-		f_read(f, setting->title, sizeof(setting->title));
-		f_read(f, setting->author, sizeof(setting->author));
-		f_read(f, setting->description, sizeof(setting->description));
+		ff_read(f, setting->title, sizeof(setting->title));
+		ff_read(f, setting->author, sizeof(setting->author));
+		ff_read(f, setting->description, sizeof(setting->description));
 
 		f_read32(f, &setting->missionCount, sizeof(setting->missionCount));
 
@@ -570,39 +564,6 @@ void SaveCampaignAsC(const char *filename, const char *name,
 	}
 };
 
-
-int Is_Dir(const char *name)
-{
-	struct stat s;
-
-	debug(D_NORMAL, "name: '%s'\n", name);
-
-	if ((stat(name, &s) == 0)) {
-	//	if ((s.st_mode & S_IFMT) == S_IFDIR) {
-		switch (s.st_mode & S_IFMT) {
-			case S_IFDIR:
-				debug(D_NORMAL, "is a dir...\n");
-				return 1;
-			case S_IFLNK:
-				{
-					char lnk_buf[512];
-
-					debug(D_NORMAL, "is a symlink...\n");
-
-					if (readlink(name, lnk_buf, (size_t) 512) != -1) {
-						debug(D_NORMAL, "resolved to '%s'\n", lnk_buf);
-						return Is_Dir(lnk_buf);
-					} else {
-						return 0;
-					}
-				}
-			default:
-				return 0;
-		}
-	}
-	return 0;
-}
-
 void AddFileEntry(struct FileEntry **list, const char *name,
 		  const char *info, int data)
 {
@@ -611,14 +572,12 @@ void AddFileEntry(struct FileEntry **list, const char *name,
 	if (strcmp(name, "..") == 0)	return;
 	if (strcmp(name, ".") == 0)	return;
 
-	if (Is_Dir(name)) return;
-
 	while (*list && strcmp((*list)->name, name) < 0)
 		list = &(*list)->next;
 
 	if (strcmp(name, "") == 0)
 		printf(" -> Adding [builtin]\n");
-	else 
+	else
 		printf(" -> Adding [%s]\n", name);
 
 	entry = sys_mem_alloc(sizeof(struct FileEntry));
@@ -696,13 +655,13 @@ char * GetHomeDirectory(void)
 
 	if (cdogs_homepath == NULL) {
 		char *p;
-		
+
 		p = getenv("CDOGS_CONFIG_DIR");
 		if (p != NULL && strlen(p) != 0) {
 			cdogs_homepath = strdup(p);
 			return cdogs_homepath;
 		}
-	
+
 		home = getenv("HOME");
 
 		if (home == NULL || strlen(home) == 0) { /* no HOME var, try to get USER */
@@ -714,14 +673,14 @@ char * GetHomeDirectory(void)
 				"# You don't have the environment variables HOME or USER set. #\n",
 				"# It is suggested you get a better shell. :D                 #\n",
 				"##############################################################\n");
-				
-				tmp1 = calloc(2048, sizeof(char));	/* lots of chars... */ 
+
+				tmp1 = calloc(2048, sizeof(char));	/* lots of chars... */
 				strcpy(tmp1, CDOGS_TEMP_DIR);
-	
+
 				tmp2 = calloc(strlen(tmp1)+1, 1);
 				strcpy(tmp2, tmp1);
 				free(tmp1);
-				
+
 				cdogs_homepath = tmp2;
 				return cdogs_homepath;
 			} else {				/* hopefully they have USER set... */
@@ -729,8 +688,8 @@ char * GetHomeDirectory(void)
 				strcpy(tmp1, "/home/");
 				strcat(tmp1, user);
 				strcat(tmp1, "/");
-				tmp2 = calloc(strlen(tmp1)+1, 1); 
-				strcpy(tmp2, tmp1);	
+				tmp2 = calloc(strlen(tmp1)+1, 1);
+				strcpy(tmp2, tmp1);
 				free(tmp1);
 
 				cdogs_homepath = tmp2;
@@ -738,7 +697,7 @@ char * GetHomeDirectory(void)
 			}
 		}
 
-		tmp1 = calloc(MAX_STRING_LEN, sizeof(char));	/* lots of chars... */ 
+		tmp1 = calloc(MAX_STRING_LEN, sizeof(char));	/* lots of chars... */
 		strcpy(tmp1, home);
 		strcat(tmp1, "/");
 
@@ -764,9 +723,8 @@ char * GetDataFilePath(const char *path)
 {
 	if (!data_path) {
 		char *tmp;
-		
-		if ((tmp = getenv("CDOGS_DATA_DIR")) != NULL && strlen(tmp) != 0
-				&& Is_Dir(tmp) && Is_Readable(tmp)) {
+
+		if ((tmp = getenv("CDOGS_DATA_DIR")) != NULL && strlen(tmp) != 0) {
 			data_path = strdup(tmp);
 		} else {
 			tmp = calloc(strlen(CDOGS_DATA_DIR)+strlen(path)+1,sizeof(char));
@@ -778,7 +736,7 @@ char * GetDataFilePath(const char *path)
 			free(tmp);
 		}
 	}
-	
+
 	strcpy(data_pbuf, data_path);
 	strcat(data_pbuf, "/");
 	strcat(data_pbuf, path);
@@ -851,7 +809,7 @@ int mkdir_deep(const char *path, mode_t m)
 				/* Mac OS X 10.4 returns EISDIR instead of EEXIST
 				 * if a dir already exists... */
 				if (errno == EEXIST || errno == EISDIR) continue;
-				else return 1; 
+				else return 1;
 			}
 		}
 	}
@@ -885,7 +843,7 @@ void SetupConfigDir(void)
 				perror("Error creating config directory:");
 		}
 	}
-		
+
 	return;
 }
 

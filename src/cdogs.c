@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 -------------------------------------------------------------------------------
 
  cdogs.c - main bits
- 
+
 */
 
 #include <stdlib.h>
@@ -55,6 +55,9 @@
 #include "files.h"
 #include "utils.h"
 
+#ifdef HW_RVL
+#include <fat.h>
+#endif
 
 static void *bkg = NULL;
 static char lastPassword[PASSWORD_MAX + 1] = "";
@@ -163,7 +166,7 @@ void CampaignIntro(void *bkg)
 	char s[1024];
 
 	debug(D_NORMAL, "\n");
-	
+
 	memcpy(GetDstScreen(), bkg, SCREEN_MEMSIZE);
 
 	y = (SCREEN_WIDTH / 4);
@@ -171,7 +174,7 @@ void CampaignIntro(void *bkg)
 	//TextStringAt(50, y - 25, gCampaign.setting->title);
 	//TextStringAt(60, y - 15, "by ");
 	//TextStringWithTable(gCampaign.setting->author, &tableFlamed);
-	
+
 	sprintf(s, "%s by %s", gCampaign.setting->title, gCampaign.setting->author);
 	TextStringSpecial(s, TEXT_TOP | TEXT_XCENTER, 0, (y - 25));
 
@@ -715,7 +718,7 @@ void DogFight(void)
 	do {
 		SetupMission(0, 1);
 		SetupMap();
-		
+
 		if (PlayerEquip(bkg)) {
 
 		srand(clock());
@@ -809,7 +812,7 @@ void MainLoop(void)
 		printf(">> Entering selection\n");
 		if (!PlayerSelection(gOptions.twoPlayers
 				|| gCampaign.dogFight, bkg)) continue;
-				
+
 		printf(">> Starting campaign\n");
 		if (gCampaign.dogFight)
 			DogFight();
@@ -847,20 +850,20 @@ void PrintHelp (void)
 		"    -screen=WxH     Set virtual screen width to W x H\n"
 		"                      Modes: 320x200, 320x240, 400x300, 640x480, 800x600\n"
 		"    -forcemode      Don't check video mode sanity\n"
-	);    
+	);
 
 	printf("%s\n",
 		"Sound Options:\n"
 		"    -nosound        Disable sound\n"
 	);
-	
+
 	printf("%s\n",
 		"Control Options:\n"
 		"    -nojoystick     Disable joystick(s)\n"
 		"    -js1threshold=n Joystick 1 threshold.\n"
 		"    -js2threshold=n Joystick 2 threshold.\n"
 	);
-		
+
 	printf("%s\n",
 		"Game Options:\n"
 		"    -savecampaigns  Save builtin campaigns as files in the current directory.\n"
@@ -877,7 +880,7 @@ void PrintHelp (void)
 	);
 }
 
-int main(int argc, char *argv[])
+int SDL_main(int argc, char *argv[])
 {
 	int i, wait = 0;
 	char s[13];
@@ -897,40 +900,48 @@ int main(int argc, char *argv[])
 		}
 	}
 
+#ifdef HW_RVL
+	if (!fatInitDefault())
+	{
+		printf("Failed to initialise FAT library\n");
+		return -1;
+	}
+#endif
+
 	SetupConfigDir();
 	LoadConfig();
-	
+
 	for (i = 1; i < argc; i++) {
 		if ((strlen(argv[i]) > 1 && *(argv[i]) == '-') || *(argv[i]) == '/') {
 			if (strcmp(argv[i] + 1, "slices") == 0) {
 				printf("Displaying CPU slices\n");
 				gOptions.displaySlices = 1;
 			}
-			
+
 			if (strstr(argv[i] + 1, "js1threshold=")) {
 				char *val = strchr(argv[i], '=');
 				extern int js1_threshold;
 				int nval;
 				val++;
-				
+
 				nval = atoi(val);
 				if (nval < 0) nval = 0;
 				printf("Joystick 1 threshold: %d\n", nval);
 				js1_threshold = nval;
 			}
-			
+
 			if (strstr(argv[i] + 1, "js2threshold=")) {
 				char *val = strchr(argv[i], '=');
 				extern int js2_threshold;
 				int nval;
 				val++;
-				
+
 				nval = atoi(val);
 				if (nval < 0) nval = 0;
 				printf("Joystick 2 threshold: %d\n", nval);
 				js2_threshold = nval;
 			}
-			
+
 			if (strstr(argv[i] + 1, "shakemult=")) {
 				char *val = strchr(argv[i], '=');
 				int nval;
@@ -940,11 +951,11 @@ int main(int argc, char *argv[])
 				nval = atoi(val);
 				if (nval < 0) nval = 0;
 				printf("Shake multiplier: %d\n", nval);
-				shakeMultiplier = nval;	
+				shakeMultiplier = nval;
 			}
 			if (strcmp(argv[i] + 1, "savecampaigns") == 0) {
 				int j = 0;
-				
+
 				printf("Saving builtin campaigns as files: \n");
 				while (SetupBuiltinCampaign(j)) {
 					sprintf(s, "bltin%02d.cpn", j);
@@ -963,7 +974,7 @@ int main(int argc, char *argv[])
 			}
 			if (strcmp(argv[i] + 1, "nojoystick") == 0) {
 				debug(D_NORMAL, "nojoystick\n");
-				js_flag = 0;				
+				js_flag = 0;
 			}
 			if (strcmp(argv[i] + 1, "fullscreen") == 0) {
 				Gfx_HintOn(HINT_FULLSCREEN);
@@ -987,7 +998,7 @@ int main(int argc, char *argv[])
 					Gfx_SetHint(HINT_SCALEFACTOR, f);
 			}
 			if (strcmp(argv[i] + 1, "help") == 0 ||
-				strcmp(argv[i] + 1, "h") == 0 || 
+				strcmp(argv[i] + 1, "h") == 0 ||
 				strcmp(argv[i] + 1, "-help") == 0) {
 				PrintHelp();
 				exit(EXIT_SUCCESS);
@@ -1001,7 +1012,7 @@ int main(int argc, char *argv[])
 		printf("Failed to start SDL!\n");
 		return -1;
 	}
-	
+
 	printf("Data directory:\t\t%s\n",	GetDataFilePath(""));
 	printf("Config directory:\t%s\n\n",	GetConfigFilePath(""));
 
