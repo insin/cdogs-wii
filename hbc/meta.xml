@@ -2,7 +2,7 @@
 <app version="1">
   <name>C-Dogs SDL</name>
   <coder>insin</coder>
-  <version>1.7.1-1</version>
+  <version>0.4.1</version>
   <release_date>20090607</release_date>
   <short_description>Arcade shoot-em-up</short_description>
   <long_description>C-Dogs is an arcade shoot-em-up which lets players work alone and cooperatively during missions or fight against each other in the “dogfight” deathmatch mode. The original DOS version of C-Dogs came with several built in missions and dogfight maps. This version does too.
