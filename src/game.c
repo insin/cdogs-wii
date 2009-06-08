@@ -179,7 +179,7 @@ static void Ticks_FrameEnd(void)
 
 	now = SDL_GetTicks();
 
-	SDL_Delay(33 - (ticks_now - now));
+	SDL_Delay(15 - (ticks_now - now));
 }
 
 static int Ticks_Synchronize(void)
