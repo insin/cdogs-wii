@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 
 -------------------------------------------------------------------------------
 
- prep.c - preparation stuff 
- 
+ prep.c - preparation stuff
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 265 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/prep.c $
  ID:     $Id: prep.c 265 2008-02-10 09:53:42Z lmartinking $
- 
+
 */
 
 
@@ -355,7 +355,7 @@ static int NameSelection(int x, int index, struct PlayerData *data,
 
 	#define ENTRY_COLS	10
 	#define	ENTRY_SPACING	12
-	
+
 	y = CenterY(((TextHeight() * ((strlen(letters) - 1) / ENTRY_COLS) )));
 
 	if (gOptions.twoPlayers && index == CHARACTER_PLAYER1)
@@ -801,7 +801,7 @@ static int MainMenu(int x, int index, int cmd)
 			PlaySound(SND_SWITCH, 0, 255);
 		} else if (selection[index] == MODE_DONE) {
 			selection[index] = MODE_SELECTNAME;
-			PlaySound(SND_SWITCH, 0, 255);				
+			PlaySound(SND_SWITCH, 0, 255);
 		}
 	}
 
@@ -887,9 +887,9 @@ int PlayerSelection(int twoPlayers, void *bkg)
 	while (mode1 != MODE_DONE || mode2 != MODE_DONE) {
 		memcpy(GetDstScreen(), bkg, SCREEN_MEMSIZE);
 		GetPlayerCmd(&cmd1, &cmd2);
-		
-		if (KeyDown(keyEsc)) return 0; // hack to allow exit
-		
+
+		if (KeyDown(keyEsc) || (cmd1 & CMD_ESC) != 0) return 0; // hack to allow exit
+
 		if (twoPlayers) {
 			if (cmd1 == prev1)
 				cmd1 = 0;
@@ -932,9 +932,9 @@ int PlayerEquip(void *bkg)
 	while (!done1 || !done2) {
 		memcpy(GetDstScreen(), bkg, SCREEN_MEMSIZE);
 		GetPlayerCmd(&cmd1, &cmd2);
-		
-		if (KeyDown(keyEsc)) return 0; // hack to exit from menu
-		
+
+		if (KeyDown(keyEsc) || (cmd1 & CMD_ESC) != 0) return 0; // hack to exit from menu
+
 		if (gOptions.twoPlayers) {
 			if (cmd1 == prev1)
 				cmd1 = 0;
