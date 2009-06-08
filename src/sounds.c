@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 -------------------------------------------------------------------------------
 
  sounds.c - um... guess what?
- 
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 265 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/sounds.c $
  ID:     $Id: sounds.c 265 2008-02-10 09:53:42Z lmartinking $
- 
+
 */
 
 #include <stdio.h>
@@ -150,10 +150,10 @@ void DoSound(int i, int len, void *data)
 {
 	int j;
 	void *newbuffer;
-	
+
 	if (!soundInitialized)
 		return;
-	
+
 	newbuffer = sys_mem_alloc(len);
 	//firstly, find if we're going to need to have a buffer with zeros
 	if (len + snd[i].pos > snd[i].size) {
@@ -189,10 +189,10 @@ void DoSound(int i, int len, void *data)
 {
 	int j;
 	void *newbuffer;
-	
+
 	if (!soundInitialized)
 		return 0;
-	
+
 	newbuffer = sys_mem_alloc(len);
 	//firstly, find if we're going to need to have a buffer with zeros
 	if (len + snd[i].pos > snd[i].size) {
@@ -203,7 +203,7 @@ void DoSound(int i, int len, void *data)
 		snd[i].playFlag = 0;
     // Replace this line with a version that mixes
 		memcpy(data, newbuffer, len);
-		
+
 	} else {
 		// Replaced with mixing version
 		memcpy(data, snd[i].data + snd[i].pos, len);
@@ -256,6 +256,8 @@ int InitSoundDevice(void)
 		return 0;
 	}
 
+	// This check fails on SDL Wii, but sound works regardless
+	#ifndef HW_RVL
 	{
 		int f;
 		Uint16 fmt;
@@ -270,12 +272,13 @@ int InitSoundDevice(void)
 			return 0;
 		}
 	}
+	#endif /* HW_RVL */
 
 	if (Mix_AllocateChannels(noOfFXChannels) != noOfFXChannels) {
 		printf("Couldn't allocate channels!\n");
 		return 0;
 	}
-	#endif
+	#endif /* SND_SDLMIXER */
 
 	// C-Dogs internals:
 	loadSampleConfiguration();
@@ -349,7 +352,7 @@ int InitializeSound(void)
 
 #ifdef SND_SDLMIXER
 Mix_Music *music = NULL;
-int PlaySong(char *name) 
+int PlaySong(char *name)
 {
 	if (!soundInitialized)
 		return 0;
@@ -360,15 +363,15 @@ int PlaySong(char *name)
 		struct stat s;
 		char *p;
 		char path[255];
-	
+
 		if (music != NULL) {
 			Mix_HaltMusic();
 			Mix_FreeMusic(music);
 			music = NULL;
 		}
-	
+
 		p = name;
-	
+
 		debug(D_NORMAL, "song path 1: %s\n", name);
 		if (stat(name, &s) != 0) {
 			strcpy(path, ModuleDirectory());
@@ -376,21 +379,21 @@ int PlaySong(char *name)
 			strcat(path, name);
 			p = path;
 		}
-		
+
 		debug(D_NORMAL, "song path 2: %s\n", p);
 		if (stat(p, &s) != 0) {
 			return 1;
 		}
-	
+
 		music = Mix_LoadMUS(p);
 		if (music == NULL) {
 			SetModuleMessage(SDL_GetError());
 			SetModuleStatus(MODULE_NOLOAD);
 			return 1;
 		}
-	
+
 		debug(D_NORMAL, "Playing song: %s\n", p);
-	
+
 		Mix_PlayMusic(music, -1);
 		SetModuleStatus(MODULE_PLAYING);
 		SetMusicVolume(musicVolume);
@@ -588,19 +591,19 @@ void ToggleTrack(int track)
 			Mix_PauseMusic();
 			SetModuleStatus(MODULE_PAUSED);
 		break;
-		
-		case MODULE_PAUSED: 
+
+		case MODULE_PAUSED:
 			Mix_ResumeMusic();
 			SetModuleStatus(MODULE_PLAYING);
 		break;
-		
+
 		case MODULE_STOPPED:
 			Mix_PlayMusic(music, 0);
 			SetModuleStatus(MODULE_PLAYING);
 		break;
 	}
 
-#endif	
+#endif
 }
 
 void SetModuleStatus(int s)
