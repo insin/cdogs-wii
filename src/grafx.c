@@ -108,7 +108,7 @@ static int ValidMode(int w, int h)
 int hints[HINT_END] = {
 	0,		// HINT_FULLSCREEN
 	1,		// HINT_WINDOW
-	1,		// HINT_SCALEFACTOR
+	2,		// HINT_SCALEFACTOR
 	320,		// HINT_WIDTH
 	240,		// HINT_HEIGHT
 	0		// HINT_FORCEMODE
