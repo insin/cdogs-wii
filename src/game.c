@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 -------------------------------------------------------------------------------
 
  game.c - game loop and related functions
- 
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 265 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/game.c $
  ID:     $Id: game.c 265 2008-02-10 09:53:42Z lmartinking $
- 
+
 */
 
 #include <stdlib.h>
@@ -145,7 +145,7 @@ static void Ticks_Update(void)
 		init = 1;
 	} else {
 		ticks_then = ticks_now;
-		ticks_now = SDL_GetTicks();		
+		ticks_now = SDL_GetTicks();
 	}
 
 	return;
@@ -153,7 +153,7 @@ static void Ticks_Update(void)
 
 static int Ticks_TimeElapsed(Uint32 msec)
 {
-	static Uint32 old_ticks = 0;	
+	static Uint32 old_ticks = 0;
 
 	if (old_ticks == 0) {
 		old_ticks = ticks_now;
@@ -178,7 +178,7 @@ static void Ticks_FrameEnd(void)
 	Uint32 now;
 
 	now = SDL_GetTicks();
-	
+
 	SDL_Delay(33 - (ticks_now - now));
 }
 
@@ -321,7 +321,7 @@ void PlayerStatus(int placement, struct PlayerData *data, TActor * p)
 	char s[50];
 
 	int flags = TEXT_TOP;
-	
+
 	if (placement == PLACE_LEFT)	flags |= TEXT_LEFT;
 	if (placement == PLACE_RIGHT)	flags |= TEXT_RIGHT;
 
@@ -387,7 +387,7 @@ static void MissionStatus(void)
 		return;
 
 	x = 5;
-	y = SCREEN_HEIGHT - 5 - TextHeight(); 
+	y = SCREEN_HEIGHT - 5 - TextHeight();
 	for (i = 0; i < gMission.missionData->objectiveCount; i++) {
 		if (gMission.missionData->objectives[i].type ==
 		    OBJECTIVE_INVESTIGATE)
@@ -398,11 +398,11 @@ static void MissionStatus(void)
 			color = gMission.objectives[i].color;
 
 			y += 3;
-			Draw_Rect(x, y, 2, 2, color); 
+			Draw_Rect(x, y, 2, 2, color);
 			y -= 3;
 
 			left = gMission.objectives[i].required - gMission.objectives[i].done;
-			
+
 			if (left > 0) {
 				if ((gMission.missionData->objectives[i].flags & OBJECTIVE_UNKNOWNCOUNT) == 0) {
 					sprintf(s, "%d", left);
@@ -468,9 +468,9 @@ void StatusDisplay(void)
 		sprintf(s, "%02d:%02d", timeHours, timeMinutes);
 		TextStringSpecial(s, TEXT_LEFT | TEXT_BOTTOM, 10, 10);
 	}
-	
+
 #define KEY_WIDTH(n) (PicWidth(&cGeneralPics[gMission.keyPics[n]]))
-	
+
 	if (gMission.flags & FLAGS_KEYCARD_YELLOW)
 		DrawKeycard(CenterX(KEY_WIDTH(0)) - 30, 20, &cGeneralPics[gMission.keyPics[0]]);
 	if (gMission.flags & FLAGS_KEYCARD_GREEN)
@@ -505,6 +505,13 @@ int HandleKey(int *done, int cmd)
 {
 	static int lastKey = 0;
 	int key = GetKeyDown();
+
+
+	// Quit on press of Home button
+	if ((cmd & CMD_ESC) != 0) {
+		*done = YES;
+		return keyEsc;
+	}
 
 	if ((key == gOptions.mapKey || (cmd & CMD_BUTTON3) != 0) && !gCampaign.dogFight) {
 		DisplayAutoMap(0);
