@@ -51,8 +51,6 @@ void PollSticks(int maxWait)
 
 	for (idx = 0; idx < 2; idx++) {
 		if (gSticks[idx].present && gSticks[idx].inUse) {
-			int i;
-			int max;
 			int btn = 0;
 
 			j = gSticks[idx].j;
@@ -90,6 +88,11 @@ void PollSticks(int maxWait)
 			if (SDL_JoystickGetButton(j, REMOTE_PLUS) ||
 				SDL_JoystickGetButton(j, CLASSIC_PLUS))
 				btn |= 8;
+
+			// Button 5 (Escape)
+			if (SDL_JoystickGetButton(j, REMOTE_HOME) ||
+				SDL_JoystickGetButton(j, CLASSIC_HOME))
+				btn |= 16;
 
 			gSticks[idx].buttons = btn;
 		}
@@ -197,6 +200,8 @@ void PollDigiSticks(int *joy1, int *joy2)
 			*joy1 |= JOYSTICK_BUTTON3;
 		if ((gSticks[0].buttons & 8) != 0)
 			*joy1 |= JOYSTICK_BUTTON4;
+		if ((gSticks[0].buttons & 16) != 0)
+			*joy1 |= JOYSTICK_BUTTON5;
 	}
 	if (joy2)
 		*joy2 = 0;
@@ -221,6 +226,8 @@ void PollDigiSticks(int *joy1, int *joy2)
 			*joy2 |= JOYSTICK_BUTTON3;
 		if ((gSticks[1].buttons & 8) != 0)
 			*joy2 |= JOYSTICK_BUTTON4;
+		if ((gSticks[1].buttons & 16) != 0)
+			*joy2 |= JOYSTICK_BUTTON5;
 	}
 }
 

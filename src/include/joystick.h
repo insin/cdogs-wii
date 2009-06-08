@@ -2,8 +2,8 @@
     C-Dogs SDL
     A port of the legendary (and fun) action/arcade cdogs.
     Copyright (C) 1995 Ronny Wester
-    Copyright (C) 2003 Jeremy Chin 
-    Copyright (C) 2003-2007 Lucas Martin-King 
+    Copyright (C) 2003 Jeremy Chin
+    Copyright (C) 2003-2007 Lucas Martin-King
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 -------------------------------------------------------------------------------
 
  joystick.h - <description here>
- 
+
  Author: $Author: lmartinking $
  Rev:    $Revision: 250 $
  URL:    $HeadURL: svn://svn.icculus.org/cdogs-sdl/trunk/src/include/joystick.h $
  ID:     $Id: joystick.h 250 2007-07-06 16:38:43Z lmartinking $
- 
+
 */
 
 #include "SDL_joystick.h"
@@ -46,7 +46,8 @@
 #define JOYSTICK_BUTTON2   32
 #define JOYSTICK_BUTTON3   64
 #define JOYSTICK_BUTTON4  128
-#define JOYSTICK_PRESENT  256
+#define JOYSTICK_BUTTON5  256
+#define JOYSTICK_PRESENT  512
 
 
 struct JoyRec {
