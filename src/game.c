@@ -521,7 +521,7 @@ int HandleKey(int *done, int cmd)
 		DisplayAutoMap(0);
 	}
 
-	// Handle pausing/unpausing
+	// Handle pausing/unpausing with joystick
 	if (((cmd & CMD_BUTTON4) != 0) && !gOptions.twoPlayers && !pauseHeld) {
 		if (gameIsPaused) {
 			gameIsPaused = NO;
@@ -540,9 +540,8 @@ int HandleKey(int *done, int cmd)
 	if (!key)
 		return 0;
 
-	if (!gPlayer1 && !gPlayer2)
-		*done = YES;
-	else if (key == keyEsc) {
+	// Handle pausing/unpausing/exiting with keyboard
+	if (key == keyEsc) {
 		if (gameIsPaused && escExits)
 			*done = YES;
 		else if (!gameIsPaused) {
@@ -668,7 +667,12 @@ int gameloop(void)
 			GetPlayerInput(&cmd1, &cmd2);
 		}
 
-		c = HandleKey(&done, cmd1 | cmd2);
+		if (!gPlayer1 && !gPlayer2) {
+			done = YES;
+			c = 0;
+		} else {
+			c = HandleKey(&done, cmd1 | cmd2);
+		}
 
 		Ticks_FrameEnd();
 	}
