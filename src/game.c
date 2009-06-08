@@ -504,8 +504,12 @@ void DisplayMessage(const char *s)
 int HandleKey(int *done, int cmd)
 {
 	static int lastKey = 0;
+	static int lastCmd = 0;
+	static int pauseHeld = NO;
 	int key = GetKeyDown();
 
+	pauseHeld = (((lastCmd & CMD_BUTTON4) != 0 && (cmd & CMD_BUTTON4) != 0) ? YES : NO);
+	lastCmd = cmd;
 
 	// Quit on press of Home button
 	if ((cmd & CMD_ESC) != 0) {
@@ -517,10 +521,16 @@ int HandleKey(int *done, int cmd)
 		DisplayAutoMap(0);
 	}
 
-	if (((cmd & CMD_BUTTON4) != 0) && !gOptions.twoPlayers) {
-		gameIsPaused = YES;
-		escExits = NO;
-	} else if (gameIsPaused && AnyButton(cmd))
+	// Handle pausing/unpausing
+	if (((cmd & CMD_BUTTON4) != 0) && !gOptions.twoPlayers && !pauseHeld) {
+		if (gameIsPaused) {
+			gameIsPaused = NO;
+		} else {
+			gameIsPaused = YES;
+			escExits = NO;
+		}
+	}
+	else if (gameIsPaused && AnyButton(cmd))
 		gameIsPaused = NO;
 
 	if (key == lastKey)
