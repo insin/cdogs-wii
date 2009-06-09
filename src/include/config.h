@@ -49,5 +49,5 @@
 #endif
 
 #ifndef CDOGS_MUSIC_DIR
-	#define CDOGS_MUSIC_DIR "./music/"
+	#define CDOGS_MUSIC_DIR "sd:/apps/cdogs-sdl/music/"
 #endif
