@@ -175,11 +175,13 @@ static void Ticks_FrameBegin(void)
 
 static void Ticks_FrameEnd(void)
 {
-	Uint32 now;
+	Uint32 delay = 15 - (ticks_now - SDL_GetTicks());
 
-	now = SDL_GetTicks();
+	if (delay < 0 || delay > 100) {
+		return;
+	}
 
-	SDL_Delay(15 - (ticks_now - now));
+	SDL_Delay(delay);
 }
 
 static int Ticks_Synchronize(void)
